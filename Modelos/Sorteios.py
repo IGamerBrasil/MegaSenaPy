@@ -1,30 +1,28 @@
 import random
-from Apostas import Aposta
+from Modelos import Apostas
+
+##########################################
+# Programa - Sorteio
+# Autor -    Lucas Candemil Chagas
+# Data -     03/24/2024
+###########################################
+
+#Classe Modelo para a fase de Sorteio
 class Sorteio:
     
     
     def __init__(self):
         self.numerosSorteados = None
-        self.apostas = None
         self.rodadas = 0
-        
-    def adicionarApostaParaSoteio(self, aposta):
-        if self.apostas is None:
-            self.apostas = []
-        if isinstance( aposta,Aposta ):
-            aposta.numeros = random.sample(range(1,51),5)
-            self.apostas.append(aposta)
-        
-        
-        
+
     def sortearNumeros(self):
-        self.numerosSorteados = [1,2,3,4,5]#random.sample(range(1,51),5)
+        self.numerosSorteados = random.sample(range(1,51),5)
     
     def rodada(self,vencedores = None, apostas = None):
         if apostas is not None:
             self.rodadas+=1
             for a in apostas:
-                if isinstance(a,Aposta):
+                if isinstance(a,Apostas.Aposta):
                     if set(a.numeros).issubset(set(self.numerosSorteados)):
                         if a not in vencedores:
                             vencedores.append(a)

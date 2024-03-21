@@ -1,0 +1,10 @@
+Para executar o programa primeiro precisa instalar a lib do myslq.connector:
+    pip install mysql
+    pip install mysql.connector
+Depois precisa se conectar ao seu banco de dados:
+    host="localhost",
+    user="root",
+    database="dell",
+    password="root"
+Ponha as informações do seu banco acima, ou crie um novo
+Depois de Run no App.py
