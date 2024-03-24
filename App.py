@@ -38,7 +38,7 @@ op = 0
 id_inicial = 0
 apostaUsuario = None
 vetor_apostas = []
-usuarioVence = False
+usuarioGanha = False
 # Loop do Menu
 while True:
     if op > 4:
@@ -48,7 +48,7 @@ while True:
     print('Menu')
     print('1 - Apostar')
     print('2 - Ver minhas apostas')
-    print('3 - Apurar resultado')
+    print('3 - Apuração e Premiação')	
     print('4 - Sair')
     
     #Salva primeiro id para quando for mostrar as apostas apenas mostre as do sorteio em execução
@@ -59,7 +59,8 @@ while True:
     try:
         op = int(input('Opção: '))
     except Exception:
-        print('Valor digitado nao eh um numero!')
+        limpar_console()
+        print('Valor digitado não é um número!')
 
     #if para pegar as informações do usuário
     if op == 1:
@@ -107,8 +108,6 @@ while True:
                     
                 servAposta.salvaNumeros(apostaUsuario)
                 
-                vetor_apostas.append(apostaUsuario)
-                
                 limpar_console()  
                 
                 print('APOSTADO!!')
@@ -116,7 +115,6 @@ while True:
     #if para mostrar caso tenha alguma aposta guardada no banco de dados  
     elif op == 2:
         limpar_console()
-        
         if apostaUsuario is not None:
             
             apostas = servAposta.visualizador_numeros_apostados_por_cpf(apostaUsuario.cpf)
@@ -138,17 +136,17 @@ while True:
         print('Execuntando o sorteio! BOA SORTE!')
         print(' ')
         premiacao.digitarValor()
-        #Caso queira fazer manualmente a inserção de apostadores sem aleatorização apague os itens abaixo
+
+        #If para verificar se apostou
         if len(vetor_apostas) == 0:
-            vetor_apostas = servAposta.registrar_apostadores(100)
+            vetor_apostas = servAposta.registrar_apostadores(5)
         else:
-            vetor_apostas.extend(servAposta.registrar_apostadores(100))  
-        ################################################################################################
-        
+            vetor_apostas.extend(servAposta.registrar_apostadores(5))  
+
         servApuracao.sortear()
         
-        #Pega todas as apostas e verifica quem venceu
-        servApuracao.verificarVencedores(vetor_apostas)
+        #Pega todas as apostas e verifica quem ganhou
+        servApuracao.verificarGanhadores(vetor_apostas)
         
         if servApuracao.sorteio.rodadas < 15:
             print(f'Sorteio Terminado com {servApuracao.sorteio.rodadas} RODADAS QUE RAPIDO!!')
@@ -159,30 +157,29 @@ while True:
         print(f'Numeros Sorteados: {servApuracao.lista_de_num_sorteados()}')
         print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
         
-        #Verifica se a algum vencedor depois das rodadas
-        t_apuracao = len(servApuracao.apuracao.vencedores)
+        #Verifica se a algum ganhador depois das rodadas
+        t_apuracao = len(servApuracao.apuracao.ganhadores)
         if t_apuracao == 0:
-            print('Nao a Vencedores :(')
+            print('Nao a Ganhadores :(')
         else:
-            print(f'Quantidade de Vencedores: {t_apuracao}')
+            print(f'Quantidade de Ganhadores: {t_apuracao}')
             print(' ')
-            print('Aposta(s) do(s) Vencedor(es): ')
+            print('Aposta(s) do(s) Ganhador(es): ')
             
-            #Imprimi vencedores
-            l = len(servApuracao.lista_das_apostas_vencedoras_em_ordem()) 
-            for a in servApuracao.lista_das_apostas_vencedoras_em_ordem():
-                if isinstance(a,Apostas.Aposta):
+            #Imprimi Ganhadores
+            l = len(servApuracao.lista_das_apostas_ganhadoras_em_ordem()) 
+            for a in servApuracao.lista_das_apostas_ganhadoras_em_ordem():
+                if isinstance(a,Apostas.Aposta):                     
+                    print(f'Nome: {a.nome} - {a.numeros}')
                     if a == apostaUsuario:
-                        usuarioVence = True
-                    print(f'Nome: {a.nome} - {a.numeros}')    
+                        premiacao.notficacao_premio(True,l)       
                 print(' ')
-                #Fase Premiação################################
-                premiacao.notficacao_premio()                        
-                ################################################  
+            #Fase Premiação################################
+            premiacao.notficacao_premio(False,l)                        
+            ################################################  
         
         #Zera rodadas para o próximo sorteio         
         servApuracao.sorteio.rodadas = 0
-        
         veti = servApuracao.maior_ao_menor_num_aparecido(vetor_apostas)
         
         if isinstance(veti, dict):

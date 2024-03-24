@@ -31,12 +31,12 @@ class ServicoApostas:
 
         #Gera Count apostadores para o sorteio
         def registrar_apostadores(self,count):
-            self.vetor_apostas.clear()
             for _ in range(count):
                 nome = gerador.name()
                 cpf = gerador.numerify(text='###########')
                 aposta = self.registro_usuario(cpf,nome)
                 self.sist_surpresa(aposta)
+                
 
             return self.vetor_apostas
 
