@@ -16,7 +16,11 @@ class Sorteio:
         self.rodadas = 0
 
     def sortearNumeros(self):
+<<<<<<< HEAD
         self.numerosSorteados = [1,2,3,4,5]  #random.sample(range(1,51),5)
+=======
+        self.numerosSorteados = random.sample(range(1,51),5)
+>>>>>>> ad823e647dc7626f514778a57775029a54207a51
     
     def rodada(self,ganhadores = None, apostas = None):
         if apostas is not None:

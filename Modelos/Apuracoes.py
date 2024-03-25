@@ -18,6 +18,14 @@ class Apuracao:
         self.ganhadores = []
         self.rodadas = 0
 
+<<<<<<< HEAD
+=======
+    
+    def verificaVencedor(self, apostas = None):
+        if isinstance(apostas,list) and apostas is not None:
+            if isinstance(self.sorteio,Sorteios.Sorteio):
+                self.sorteio.rodada(self.vencedores, apostas)
+>>>>>>> ad823e647dc7626f514778a57775029a54207a51
     
     def verificaGanhador(self, apostas = None):
         if isinstance(apostas,list) and apostas is not None:
