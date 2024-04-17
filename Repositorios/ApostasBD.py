@@ -22,57 +22,98 @@ class ApostaBD:
                     database="dell",
                     password="root"
                     )
-        
+    
     #Conexão com o Banco de dados
     def connectBD(self):
+        #mexe com a tabela de apostas
         self.cursorAposta = self.db_config.cursor()
+        #mexe com a tabela dos numeros sorteados
         self.cursorNumerosAposta = self.db_config.cursor()
+        #mexe com a tabela dos sorteios realizados
+        self.cursorSorteios = self.db_config.cursor()
         
+    
     #Criação das Tabela  
     def criarTabelas(self):
         
+        nome_banco = 'dell'
+        self.cursorAposta.execute(f"SHOW DATABASES LIKE '{nome_banco}'")
+        
+        banco_existe = self.cursorAposta.fetchone()
+        if banco_existe:
+            print(f'O banco de dados {nome_banco} já existe.')
+        else:
+            comando_sql=f'CREATE DATABASE {nome_banco}'
+            self.cursorAposta.execute(comando_sql)
+            print(f'Banco de dados {nome_banco} criado com sucesso!')
+    
+        self.criar_tabela_apostas()
+        self.criar_tabela_numeros_apostados()
+        
+    def criar_sorteios_tabela(self):
+        self.cursorSorteios.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "sorteios"))
+        
         #Result é verdadeiro se existir tabela de aposta
+        result = self.cursorSorteios.fetchone()
+        
+        if not result:
+            self.create_table_query = """
+                                CREATE TABLE sorteios (
+                                    id int AUTO_INCREMENT PRIMARY KEY NOT NULL,
+                                    numero_vencedores int NOT NULL,
+                                    rodadas int NOT NULL
+                                );
+                               """
+            self.cursorSorteios.execute(self.create_table_query)
+    
+
+    def criar_tabela_apostas(self):
         self.cursorAposta.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "aposta"))
+        
+        #Result é verdadeiro se existir tabela de aposta
         result = self.cursorAposta.fetchone()
         
-        #if para impedir que se crie mais de uma vez a tabela
         if not result:
             self.create_table_query = """
                                 CREATE TABLE aposta (
                                     id int PRIMARY KEY NOT NULL,
                                     cpf char(11) NOT NULL,
                                     nome varchar(100) NOT NULL
-                                )
+                                    id_sorteio int NOT NULL,
+                                    FOREIGN KEY (id_sorteio) REFERENCES sorteios(id)
+                                );
+                                
+                                CREATE INDEX idx_cpf ON aposta(cpf);
                                """
             self.cursorAposta.execute(self.create_table_query)
         else:
             self.verificacao_conteudo()
+        
             
-        #Result é verdadeiro se existir tabela de numeros_aposta
-        self.cursorNumerosAposta.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "numeros_aposta"))      
+    def criar_tabela_numeros_apostados(self):
+        self.cursorNumerosAposta.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "numeros_aposta")) 
+        
+        #Result é verdadeiro se existir tabela de numeros_aposta     
         result = self.cursorNumerosAposta.fetchone()   
         
         #if para impedir que se crie mais de uma vez a tabela 
         if not result:
-            self.criarTabelaNumerosApostados()
-    
-    def criarTabelaNumerosApostados(self):
-        self.create_table_query = """
+            self.create_table_query = """
                                 CREATE TABLE numeros_aposta (
                                     id int AUTO_INCREMENT PRIMARY KEY NOT NULL,
-                                    n1 int,
-                                    n2 int,
-                                    n3 int,
-                                    n4 int,
-                                    n5 int,
+                                    n1 int NOT NULL,
+                                    n2 int NOT NULL,
+                                    n3 int NOT NULL,
+                                    n4 int NOT NULL,
+                                    n5 int NOT NULL,
                                     id_aposta int NOT NULL,
                                     FOREIGN KEY (id_aposta) REFERENCES aposta(id)
-                                )
+                                );
+                                
+                                CREATE INDEX idx_id_aposta ON numeros_aposta(id_aposta);
                                 """
-        self.cursorNumerosAposta.execute(self.create_table_query)
-        print("CriadaNumeros")
-        
-        
+            self.cursorNumerosAposta.execute(self.create_table_query)
+             
     #insercao de dados no banco
     
     def adicionarNumero(self, aposta, num):
@@ -80,7 +121,13 @@ class ApostaBD:
         #Verifica se num esta no intervalo 1 a 50, juntamente se num não esta na aposta e se a aposta ainda não tem 5 números
         if num in range(1,51) and num not in aposta.numeros and len(aposta.numeros) < 5:
             aposta.numeros.append(num)
-            
+
+    def registrarSorteio(self, num_vencedores, rodadas):
+        self.cursorAposta.execute("""
+                                    INSERT INTO sorteios (numero_vencedores, rodadas)
+                                    VALUES (%s, %s,%s);
+                                    """, (num_vencedores, rodadas))
+    
     #Sistema Surpresinha            
     def surpresinha(self, aposta):
         aposta.numeros = random.sample(range(1,51),5)
@@ -88,6 +135,19 @@ class ApostaBD:
     
     #Adiciona no Banco e retorna aposta       
     def identificacaoUsuario(self, cpf, nome):
+        apostador = Apostas.Aposta(nome, cpf, self.id)
+        
+        self.cursorSorteios.execute("SELECT * FROM sorteios")
+        
+        
+        self.cursorAposta.execute("""
+                                    INSERT INTO aposta (id, cpf, nome,id_sorteio)
+                                    VALUES (%s, %s, %s, %s, %s);
+                                    """, (self.id, cpf, nome, self.cursorSorteios.fetchall()[-1][0]))
+        self.id+=1
+        return apostador
+    
+    def identificacaoNaoUsuario(self, cpf, nome):
         apostador = Apostas.Aposta(nome, cpf, self.id)
         
         self.cursorAposta.execute("""
@@ -109,7 +169,17 @@ class ApostaBD:
         
         #seleciona todas as aposta do cpf específico
         self.cursorNumerosAposta.execute(f"""
-                                         SELECT na.id_aposta, na.n1, na.n2, na.n3, na.n4, na.n5 FROM aposta a LEFT JOIN numeros_aposta na ON a.id = na.id_aposta WHERE a.cpf = {cpf}
+                                            SELECT 
+                                               na.id_aposta, 
+                                               na.n1, 
+                                               na.n2, 
+                                               na.n3, 
+                                               na.n4, 
+                                               na.n5 
+                                            FROM aposta a 
+                                            LEFT JOIN numeros_aposta na 
+                                                   ON a.id = na.id_aposta
+                                            WHERE a.cpf = {cpf};
                                          """)
 
         return self.cursorNumerosAposta.fetchall()
@@ -124,12 +194,16 @@ class ApostaBD:
                     
     #Deleta todos as tabela                
     def deleteBDs(self):
+        self.cursorAposta.execute("""
+                                    DROP TABLE sorteios
+                                      """)  
         self.cursorNumerosAposta.execute("""
                                     DROP TABLE numeros_aposta
                                     """) 
         self.cursorAposta.execute("""
                                     DROP TABLE aposta
-                                      """)    
+                                      """)   
+         
     #Atualiza o Banco    
     def commitBD(self):
         self.db_config.commit()

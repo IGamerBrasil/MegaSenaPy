@@ -15,17 +15,17 @@ class Apuracao:
             self.sorteio = sorteio
         else:
             self.sorteio = None
-        self.vencedores = []
+        self.ganhadores = []
         self.rodadas = 0
 
     
-    def verificaVencedor(self, apostas = None):
+    def verificaGanhador(self, apostas = None):
         if isinstance(apostas,list) and apostas is not None:
             if isinstance(self.sorteio,Sorteios.Sorteio):
-                self.sorteio.rodada(self.vencedores, apostas)
+                self.sorteio.rodada(self.ganhadores, apostas)
     
-    def numeroVencedores(self):
-        return len(self.vencedores)
+    def numeroGanhadores(self):
+        return len(self.ganhadores)
     
     def getNumeroDeRodadas(self):
         if self.sorteio is not None:

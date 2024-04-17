@@ -1,3 +1,4 @@
+import random
 from Repositorios import ApostasBD
 from Modelos import Apostas
 from faker import Faker
@@ -28,15 +29,22 @@ class ServicoApostas:
             aposta = self.aBD.identificacaoUsuario(cpf, nome)
             self.aBD.commitBD()
             return aposta
+        
+        def registro_nao_usuario(self,cpf,nome):
+            aposta = self.aBD.identificacaoNaoUsuario(cpf, nome)
+            self.aBD.commitBD()
+            return aposta
 
         #Gera Count apostadores para o sorteio
         def registrar_apostadores(self,count):
-            self.vetor_apostas.clear()
             for _ in range(count):
                 nome = gerador.name()
                 cpf = gerador.numerify(text='###########')
-                aposta = self.registro_usuario(cpf,nome)
-                self.sist_surpresa(aposta)
+                num_apostas = random.randint(1,6)
+                for _ in range(num_apostas):
+                    aposta = self.registro_nao_usuario(cpf,nome)
+                    self.sist_surpresa(aposta)
+                
 
             return self.vetor_apostas
 
