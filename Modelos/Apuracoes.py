@@ -1,5 +1,4 @@
 from Modelos import Sorteios
-verifaca = False
 
 ##########################################
 # Programa - Sorteio
@@ -18,25 +17,12 @@ class Apuracao:
         self.ganhadores = []
         self.rodadas = 0
 
-<<<<<<< HEAD
-=======
-    
-    def verificaGanhador(self, apostas = None):
-        if isinstance(apostas,list) and apostas is not None:
-            if isinstance(self.sorteio,Sorteios.Sorteio):
-<<<<<<< HEAD
-                self.sorteio.rodada(self.ganhadores, apostas)
-    
-=======
-                self.sorteio.rodada(self.vencedores, apostas)
->>>>>>> ad823e647dc7626f514778a57775029a54207a51
     
     def verificaGanhador(self, apostas = None):
         if isinstance(apostas,list) and apostas is not None:
             if isinstance(self.sorteio,Sorteios.Sorteio):
                 self.sorteio.rodada(self.ganhadores, apostas)
     
->>>>>>> 93286719b22bec5bbdb9e392a7e182bd55bbd23c
     def numeroGanhadores(self):
         return len(self.ganhadores)
     

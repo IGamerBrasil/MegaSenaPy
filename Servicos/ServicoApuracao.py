@@ -1,6 +1,7 @@
-from Modelos import Sorteios
 from Modelos import Apuracoes
 from Modelos import Apostas
+
+from Servicos import ServicoSorteio
 
 ##########################################
 # Programa - Sorteio
@@ -10,11 +11,8 @@ from Modelos import Apostas
 
 class ServicoApuracao():
     def __init__(self):
-        self.sorteio = Sorteios.Sorteio()
-        self.apuracao = Apuracoes.Apuracao(self.sorteio)
-    
-    def sortear(self):
-       self.sorteio.sortearNumeros()
+        self.servSorteio = ServicoSorteio.ServicoSorteio()     
+        self.apuracao = Apuracoes.Apuracao(self.servSorteio.sorteio)
     
     #Vê quem ganhou, caso nao tenha ele faz rodadas extra
     def verificarGanhadores(self,vetApostas):
@@ -25,7 +23,7 @@ class ServicoApuracao():
                 print('Ninguem ganhou, por essa nao esperavamos, por isso daremos mais 25 CHANCES!!')
                 print(' ')
                 for _ in range(25):
-                    self.sorteio.sortearExtra()
+                    self.servSorteio.sorteio.sortearExtra()
                     self.apuracao.verificaGanhador(vetApostas)
                     if len(ganhadores_sorteio) > 0:
                         break
@@ -53,7 +51,6 @@ class ServicoApuracao():
         return sorted(self.apuracao.ganhadores, key=lambda x: x.nome)
         
                       
-    def lista_de_num_sorteados(self):           
-         return self.sorteio.numerosSorteados           
-       
-        
+            
+    
+

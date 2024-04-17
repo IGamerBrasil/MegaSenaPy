@@ -18,7 +18,7 @@ class ServicoApostas:
             self.vetor_apostas = []
 
         def criacao_de_tabelas(self):
-            self.aBD.connectBD()
+            self.aBD.connectApostaBD()
             self.aBD.criarTabelas()
         
         #Caso queira excluir os Bancos ponha na ultima linha do App.py, salve, execute e aperte 4           

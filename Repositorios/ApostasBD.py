@@ -24,13 +24,11 @@ class ApostaBD:
                     )
     
     #Conexão com o Banco de dados
-    def connectBD(self):
+    def connectApostaBD(self):
         #mexe com a tabela de apostas
         self.cursorAposta = self.db_config.cursor()
         #mexe com a tabela dos numeros sorteados
         self.cursorNumerosAposta = self.db_config.cursor()
-        #mexe com a tabela dos sorteios realizados
-        self.cursorSorteios = self.db_config.cursor()
         
     
     #Criação das Tabela  
@@ -50,23 +48,7 @@ class ApostaBD:
         self.criar_tabela_apostas()
         self.criar_tabela_numeros_apostados()
         
-    def criar_sorteios_tabela(self):
-        self.cursorSorteios.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "sorteios"))
-        
-        #Result é verdadeiro se existir tabela de aposta
-        result = self.cursorSorteios.fetchone()
-        
-        if not result:
-            self.create_table_query = """
-                                CREATE TABLE sorteios (
-                                    id int AUTO_INCREMENT PRIMARY KEY NOT NULL,
-                                    numero_vencedores int NOT NULL,
-                                    rodadas int NOT NULL
-                                );
-                               """
-            self.cursorSorteios.execute(self.create_table_query)
     
-
     def criar_tabela_apostas(self):
         self.cursorAposta.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "aposta"))
         
@@ -78,7 +60,7 @@ class ApostaBD:
                                 CREATE TABLE aposta (
                                     id int PRIMARY KEY NOT NULL,
                                     cpf char(11) NOT NULL,
-                                    nome varchar(100) NOT NULL
+                                    nome varchar(100) NOT NULL,
                                     id_sorteio int NOT NULL,
                                     FOREIGN KEY (id_sorteio) REFERENCES sorteios(id)
                                 );
@@ -122,11 +104,6 @@ class ApostaBD:
         if num in range(1,51) and num not in aposta.numeros and len(aposta.numeros) < 5:
             aposta.numeros.append(num)
 
-    def registrarSorteio(self, num_vencedores, rodadas):
-        self.cursorAposta.execute("""
-                                    INSERT INTO sorteios (numero_vencedores, rodadas)
-                                    VALUES (%s, %s,%s);
-                                    """, (num_vencedores, rodadas))
     
     #Sistema Surpresinha            
     def surpresinha(self, aposta):
@@ -194,9 +171,7 @@ class ApostaBD:
                     
     #Deleta todos as tabela                
     def deleteBDs(self):
-        self.cursorAposta.execute("""
-                                    DROP TABLE sorteios
-                                      """)  
+        
         self.cursorNumerosAposta.execute("""
                                     DROP TABLE numeros_aposta
                                     """) 

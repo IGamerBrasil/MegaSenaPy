@@ -1,5 +1,7 @@
 from Servicos import ServicoApostas
 from Servicos import ServicoApuracao
+from Servicos import ServicoSorteio
+
 from Modelos import Apostas
 from Modelos import Premiacao
 
@@ -17,8 +19,10 @@ import os
 
 servAposta = ServicoApostas.ServicoApostas()
 servApuracao = ServicoApuracao.ServicoApuracao()
+servSorteio = ServicoSorteio.ServicoSorteio()
 premiacao = Premiacao.Premiacao()
 
+servSorteio.criar_tabela_sorteio()
 servAposta.criacao_de_tabelas()
 
 nome = ''
@@ -149,18 +153,18 @@ while True:
         else:
             vetor_apostas.extend(servAposta.registrar_apostadores(100))  
 
-        servApuracao.sortear()
+        servSorteio.sortear()
         
         #Pega todas as apostas e verifica quem ganhou
         servApuracao.verificarGanhadores(vetor_apostas)
         
-        if servApuracao.sorteio.rodadas < 15:
-            print(f'Sorteio Terminado com {servApuracao.sorteio.rodadas} RODADAS QUE RAPIDO!!')
+        if servSorteio.sorteio.rodadas < 15:
+            print(f'Sorteio Terminado com {servSorteio.sorteio.rodadas} RODADAS QUE RAPIDO!!')
         else:
-            print(f'Desculpe a demora, chegamos no final em {servApuracao.sorteio.rodadas} rodadas...')
+            print(f'Desculpe a demora, chegamos no final em {servSorteio.sorteio.rodadas} rodadas...')
             
         print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
-        print(f'Numeros Sorteados: {servApuracao.lista_de_num_sorteados()}')
+        print(f'Numeros Sorteados: {servSorteio.lista_de_num_sorteados()}')
         print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
         
         #Verifica se a algum ganhador depois das rodadas
@@ -180,12 +184,15 @@ while True:
                     if a == apostaUsuario:
                         premiacao.notficacao_premio(True,l)       
                 print(' ')
+            
             #Fase Premiação################################
             premiacao.notficacao_premio(False,l)                        
             ################################################  
         
+        servSorteio.registrar_sorteio(t_apuracao)
+        
         #Zera rodadas para o próximo sorteio         
-        servApuracao.sorteio.rodadas = 0
+        servSorteio.sorteio.rodadas = 0
         veti = servApuracao.maior_ao_menor_num_aparecido(vetor_apostas)
         
         if isinstance(veti, dict):
@@ -202,6 +209,7 @@ while True:
     elif op == 4:
         break
     elif op == 5:
+        servSorteio.delecao_de_tabela_sorteio()
         servAposta.delecao_de_tabelas()
 
 # Fechar conexão com o banco de dados
