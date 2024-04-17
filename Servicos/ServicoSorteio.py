@@ -19,6 +19,18 @@ class ServicoSorteio:
     
     def registrar_sorteio(self, num_vencedores):
         self.rep_sorteio.registrarSorteio(num_vencedores, self.sorteio.rodadas)
+    
+    def update_sorteio(self, id, num_vencedores):
+        self.rep_sorteio.update_sorteio(id, num_vencedores, self.sorteio.rodadas)
         
+    def get_sorteio_atual(self):
+        return self.rep_sorteio.get_sorteio()
+    
+    def getNumeroDeRodadas(self):
+        if self.sorteio is not None:
+            return self.sorteio.rodadas
+        else:
+            return 0  
+          
     def delecao_de_tabela_sorteio(self):
         self.rep_sorteio.deleteSorteioBD()

@@ -35,7 +35,7 @@ class ServicoApuracao():
         dict = {}
         count = 0
         todas_apostas = apostas
-        for i in self.lista_de_num_sorteados():
+        for i in self.servSorteio.lista_de_num_sorteados():
             count = 0
             for a in todas_apostas:
                 if isinstance(a,Apostas.Aposta):
@@ -49,8 +49,7 @@ class ServicoApuracao():
     #Ordena em ordem alfabética de acordo com o nome
     def lista_das_apostas_ganhadoras_em_ordem(self):
         return sorted(self.apuracao.ganhadores, key=lambda x: x.nome)
-        
-                      
+             
             
     
 

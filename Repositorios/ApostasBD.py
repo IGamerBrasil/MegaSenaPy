@@ -1,6 +1,7 @@
 import mysql.connector
 import random
 from Modelos import Apostas
+from Repositorios import SorteioBD
 from faker import Faker
 gerador = Faker()
 
@@ -22,13 +23,15 @@ class ApostaBD:
                     database="dell",
                     password="root"
                     )
-    
+        self.sortBd = SorteioBD.SorteioBD()
+        
     #Conexão com o Banco de dados
     def connectApostaBD(self):
         #mexe com a tabela de apostas
         self.cursorAposta = self.db_config.cursor()
         #mexe com a tabela dos numeros sorteados
         self.cursorNumerosAposta = self.db_config.cursor()
+        
         
     
     #Criação das Tabela  
@@ -114,13 +117,21 @@ class ApostaBD:
     def identificacaoUsuario(self, cpf, nome):
         apostador = Apostas.Aposta(nome, cpf, self.id)
         
-        self.cursorSorteios.execute("SELECT * FROM sorteios")
+        self.sortBd.connectSorteioBD()
         
+        self.sortBd.cursorSorteios.execute("SELECT * FROM sorteios")
         
-        self.cursorAposta.execute("""
+        if len(self.sortBd.cursorSorteios.fetchall()) == 0:
+            self.cursorAposta.execute("""
                                     INSERT INTO aposta (id, cpf, nome,id_sorteio)
-                                    VALUES (%s, %s, %s, %s, %s);
-                                    """, (self.id, cpf, nome, self.cursorSorteios.fetchall()[-1][0]))
+                                    VALUES (%s, %s, %s, %s);
+                                    """, (self.id, cpf, nome, 1))
+        else:
+            self.cursorAposta.execute("""
+                                    INSERT INTO aposta (id, cpf, nome,id_sorteio)
+                                    VALUES (%s, %s, %s, %s);
+                                    """, (self.id, cpf, nome, self.sortBd.cursorSorteios.fetchall()[-1][0]))
+        
         self.id+=1
         return apostador
     

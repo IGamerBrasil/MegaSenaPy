@@ -26,10 +26,5 @@ class Apuracao:
     def numeroGanhadores(self):
         return len(self.ganhadores)
     
-    def getNumeroDeRodadas(self):
-        if self.sorteio is not None:
-            return self.sorteio.rodadas
-        else:
-            return None
     
         

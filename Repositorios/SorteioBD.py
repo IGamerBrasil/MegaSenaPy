@@ -10,7 +10,7 @@ class SorteioBD:
                     database="dell",
                     password="root"
                     )
-    
+            
     #Conexão com o Banco de dados
     def connectSorteioBD(self):
         #mexe com a tabela dos sorteios realizados
@@ -34,10 +34,23 @@ class SorteioBD:
     
     
     def registrarSorteio(self, num_vencedores, rodadas):
-        self.cursorAposta.execute("""
+        self.cursorSorteios.execute("""
                                     INSERT INTO sorteios (numero_vencedores, rodadas)
                                     VALUES (%s, %s,%s);
                                     """, (num_vencedores, rodadas))
+        
+    def get_sorteio(self):
+        self.cursorSorteios.execute("SELECT * FROM sorteios")
+        return self.cursorSorteios.fetchall()[-1]
+    
+    def update_sorteio(self, id, numero_vencedores, rodadas):
+        self.cursorSorteios.execute("""
+                                    UPDATE sorteios
+                                    SET numero_vencedores = %s 
+                                        AND rodadas = %s
+                                    WHERE id = %s
+                                    """,(numero_vencedores,rodadas,id))
+    
     def deleteSorteioBD(self):
         self.cursorSorteios.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "sorteios"))
         
