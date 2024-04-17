@@ -22,15 +22,7 @@ class ApostaBD:
                     database="dell",
                     password="root"
                     )
-<<<<<<< HEAD
     
-=======
-<<<<<<< HEAD
-    
-=======
-        
->>>>>>> ad823e647dc7626f514778a57775029a54207a51
->>>>>>> 93286719b22bec5bbdb9e392a7e182bd55bbd23c
     #Conexão com o Banco de dados
     def connectBD(self):
         #mexe com a tabela de apostas
@@ -44,10 +36,6 @@ class ApostaBD:
     #Criação das Tabela  
     def criarTabelas(self):
         
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 93286719b22bec5bbdb9e392a7e182bd55bbd23c
         nome_banco = 'dell'
         self.cursorAposta.execute(f"SHOW DATABASES LIKE '{nome_banco}'")
         
@@ -59,18 +47,12 @@ class ApostaBD:
             self.cursorAposta.execute(comando_sql)
             print(f'Banco de dados {nome_banco} criado com sucesso!')
     
-<<<<<<< HEAD
         self.criar_tabela_apostas()
         self.criar_tabela_numeros_apostados()
         
     def criar_sorteios_tabela(self):
         self.cursorSorteios.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "sorteios"))
         
-=======
-        
-=======
->>>>>>> ad823e647dc7626f514778a57775029a54207a51
->>>>>>> 93286719b22bec5bbdb9e392a7e182bd55bbd23c
         #Result é verdadeiro se existir tabela de aposta
         result = self.cursorSorteios.fetchone()
         
@@ -130,11 +112,7 @@ class ApostaBD:
                                 
                                 CREATE INDEX idx_id_aposta ON numeros_aposta(id_aposta);
                                 """
-<<<<<<< HEAD
             self.cursorNumerosAposta.execute(self.create_table_query)
-=======
-        self.cursorNumerosAposta.execute(self.create_table_query)
->>>>>>> 93286719b22bec5bbdb9e392a7e182bd55bbd23c
              
     #insercao de dados no banco
     
@@ -143,7 +121,6 @@ class ApostaBD:
         #Verifica se num esta no intervalo 1 a 50, juntamente se num não esta na aposta e se a aposta ainda não tem 5 números
         if num in range(1,51) and num not in aposta.numeros and len(aposta.numeros) < 5:
             aposta.numeros.append(num)
-<<<<<<< HEAD
 
     def registrarSorteio(self, num_vencedores, rodadas):
         self.cursorAposta.execute("""
@@ -151,13 +128,6 @@ class ApostaBD:
                                     VALUES (%s, %s,%s);
                                     """, (num_vencedores, rodadas))
     
-=======
-<<<<<<< HEAD
-
-=======
-            
->>>>>>> ad823e647dc7626f514778a57775029a54207a51
->>>>>>> 93286719b22bec5bbdb9e392a7e182bd55bbd23c
     #Sistema Surpresinha            
     def surpresinha(self, aposta):
         aposta.numeros = random.sample(range(1,51),5)
