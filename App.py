@@ -209,8 +209,9 @@ while True:
     elif op == 4:
         break
     elif op == 5:
-        servSorteio.delecao_de_tabela_sorteio()
         servAposta.delecao_de_tabelas()
+        servSorteio.delecao_de_tabela_sorteio()
+        
 
 # Fechar conexão com o banco de dados
 servAposta.fechar_banco()
