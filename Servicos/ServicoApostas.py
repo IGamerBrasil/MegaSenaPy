@@ -44,6 +44,7 @@ class ServicoApostas:
                 for _ in range(num_apostas):
                     aposta = self.registro_nao_usuario(cpf,nome,id_sorteio)
                     self.sist_surpresa(aposta)
+            print(f'Tam vetor_aposta {len(self.vetor_apostas)}')
             return self.vetor_apostas
 
         #Metodo do sistema Surpresinha

@@ -21,8 +21,8 @@ class ServicoSorteio:
         self.rep_sorteio.registrarSorteio(num_vencedores, rodadas)
         self.rep_sorteio.commitBD()
     
-    def update_sorteio(self, id, num_vencedores):
-        self.rep_sorteio.update_sorteio(id, num_vencedores, self.sorteio.rodadas)
+    def update_sorteio(self, id, num_vencedores, rodadas):
+        self.rep_sorteio.update_sorteio(id, num_vencedores, rodadas)
         self.rep_sorteio.commitBD()
         
     def get_sorteio_atual(self):

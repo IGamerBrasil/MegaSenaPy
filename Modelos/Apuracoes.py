@@ -9,7 +9,6 @@ from Modelos import Sorteios
 #Classe Modelo para a fase de apuração
 class Apuracao:
     def __init__(self, sorteio):
-        self.numerosSorteados = None
         if isinstance(sorteio,Sorteios.Sorteio):
             self.sorteio = sorteio
         else:
@@ -19,6 +18,7 @@ class Apuracao:
 
     
     def verificaGanhador(self, apostas = None):
+        print(f'Len de numerosSorteados {len(self.sorteio.numerosSorteados)}')
         if isinstance(apostas,list) and apostas is not None:
             if isinstance(self.sorteio,Sorteios.Sorteio):
                 self.sorteio.rodada(self.ganhadores, apostas)

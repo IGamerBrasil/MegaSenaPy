@@ -125,13 +125,13 @@ class ApostaBD:
         self.id+=1
         return apostador
     
-    def identificacaoNaoUsuario(self, cpf, nome):
+    def identificacaoNaoUsuario(self, cpf, nome, id_sorteio):
         apostador = Apostas.Aposta(nome, cpf, self.id)
         
         self.cursorAposta.execute("""
-                                    INSERT INTO aposta (id, cpf, nome)
-                                    VALUES (%s, %s,%s);
-                                    """, (self.id, cpf, nome))
+                                    INSERT INTO aposta (id, cpf, nome, id_sorteio)
+                                    VALUES (%s, %s, %s, %s);
+                                    """, (self.id, cpf, nome, id_sorteio))
         self.id+=1
         return apostador
     

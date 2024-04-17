@@ -10,12 +10,13 @@ from Servicos import ServicoSorteio
 ###########################################
 
 class ServicoApuracao():
-    def __init__(self):
-        self.servSorteio = ServicoSorteio.ServicoSorteio()     
+    def __init__(self, servSorteio):
+        self.servSorteio = servSorteio     
         self.apuracao = Apuracoes.Apuracao(self.servSorteio.sorteio)
-    
+
     #Vê quem ganhou, caso nao tenha ele faz rodadas extra
     def verificarGanhadores(self,vetApostas):
+        print(f'Len de Serv numerosSorteados {len(self.servSorteio.sorteio.numerosSorteados)}')
         if vetApostas is not None:
             self.apuracao.verificaGanhador(vetApostas)
             ganhadores_sorteio = self.apuracao.ganhadores

@@ -19,7 +19,7 @@ import os
 
 servSorteio = ServicoSorteio.ServicoSorteio()
 servAposta = ServicoApostas.ServicoApostas()
-servApuracao = ServicoApuracao.ServicoApuracao()
+servApuracao = ServicoApuracao.ServicoApuracao(servSorteio)
 premiacao = Premiacao.Premiacao()
 
 servSorteio.criar_tabela_sorteio()
@@ -64,6 +64,7 @@ while True:
     if not sorteio_registrado:
         sorteio_registrado = True
         servSorteio.registrar_sorteio(0, 0)
+        id_sorteio = servSorteio.get_sorteio_atual()[0]
     
     #Salva primeiro id para quando for mostrar as apostas apenas mostre as do sorteio em execução
     if op == 0:
@@ -93,7 +94,6 @@ while True:
              cpf = input('Seu CPF: ')
              
         #Pega as informações do usuário e armazena no Banco de Dados
-        id_sorteio = servSorteio.get_sorteio_atual()[0]
         apostaUsuario = servAposta.registro_usuario(cpf,nome,id_sorteio)
         
         #Loop para caso não ponha as informações corretas o usuário não possa continuar
@@ -106,6 +106,7 @@ while True:
             if surpresa=='s':
                 servAposta.sist_surpresa(apostaUsuario)
                 vetor_apostas.append(apostaUsuario)
+                print('Inserido')
                 
                 limpar_console()
                 print('APOSTADO!!') 
@@ -156,17 +157,20 @@ while True:
 
         #If para verificar se apostou
         if len(vetor_apostas) == 0:
+            print('nao apostou')
             vetor_apostas = servAposta.registrar_apostadores(100,id_sorteio)
         else:
+            print('apostou')
             vetor_apostas.extend(servAposta.registrar_apostadores(100,id_sorteio))  
 
         servSorteio.sortear()
+        print(f'Len de Serv numerosSorteados {len(servSorteio.sorteio.numerosSorteados)}')
         
         #Pega todas as apostas e verifica quem ganhou
         servApuracao.verificarGanhadores(vetor_apostas)
         
         if servSorteio.getNumeroDeRodadas() < 15:
-            print(f'Sorteio Terminado com {servSorteio} RODADAS QUE RAPIDO!!')
+            print(f'Sorteio Terminado com {servSorteio.getNumeroDeRodadas()} RODADAS QUE RAPIDO!!')
         else:
             print(f'Desculpe a demora, chegamos no final em {servSorteio.getNumeroDeRodadas()} rodadas...')
             
@@ -195,7 +199,8 @@ while True:
             premiacao.notficacao_premio(False,num_ganhadores)                       
             ################################################  
 
-        servSorteio.update_sorteio(id_sorteio, num_ganhadores)        
+        print(f'ID sorteio {id_sorteio}')
+        servSorteio.update_sorteio(id_sorteio, num_ganhadores, servSorteio.getNumeroDeRodadas())        
         
         #Zera rodadas para o próximo sorteio         
         servSorteio.sorteio.rodadas = 0
