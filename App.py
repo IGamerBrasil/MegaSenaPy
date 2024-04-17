@@ -55,9 +55,9 @@ def menu():
 
 # Loop do Menu
 while True:
-    if op > 4:
+    if op > 5:
         limpar_console()
-        print('Digite número de 1 a 4')
+        print('Digite número de 1 a 5')
     menu()
     
     #Salva primeiro id para quando for mostrar as apostas apenas mostre as do sorteio em execução

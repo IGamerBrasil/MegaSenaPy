@@ -39,6 +39,13 @@ class SorteioBD:
                                     VALUES (%s, %s,%s);
                                     """, (num_vencedores, rodadas))
     def deleteSorteioBD(self):
-        self.cursorSorteios.execute("""
+        self.cursorSorteios.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "sorteios"))
+        
+        #Result é verdadeiro se existir tabela de aposta
+        result = self.cursorSorteios.fetchone()
+        if result:
+            self.cursorSorteios.execute("""
                                     DROP TABLE sorteios
                                       """)  
+        else:
+            print('Tabela nao existe')

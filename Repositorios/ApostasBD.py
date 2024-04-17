@@ -171,13 +171,25 @@ class ApostaBD:
                     
     #Deleta todos as tabela                
     def deleteBDs(self):
+        self.cursorNumerosAposta.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "numeros_aposta")) 
         
-        self.cursorNumerosAposta.execute("""
-                                    DROP TABLE numeros_aposta
-                                    """) 
-        self.cursorAposta.execute("""
-                                    DROP TABLE aposta
-                                      """)   
+        #Result é verdadeiro se existir tabela de numeros_aposta     
+        result = self.cursorNumerosAposta.fetchone()   
+        
+        if result:
+            self.cursorNumerosAposta.execute("""
+                                        DROP TABLE numeros_aposta
+                                        """) 
+            
+        self.cursorAposta.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "aposta"))
+        
+        #Result é verdadeiro se existir tabela de aposta
+        result = self.cursorAposta.fetchone()
+        
+        if result:
+            self.cursorAposta.execute("""
+                                        DROP TABLE aposta
+                                          """)   
          
     #Atualiza o Banco    
     def commitBD(self):
