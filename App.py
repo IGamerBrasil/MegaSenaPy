@@ -21,6 +21,13 @@ premiacao = Premiacao.Premiacao()
 
 servAposta.criacao_de_tabelas()
 
+nome = ''
+cpf = ''
+op = 0
+id_inicial = 0
+apostaUsuario = None
+vetor_apostas = []
+
 #metodo que deixa mais limpo o terminal
 def limpar_console():
     print(os.name)
@@ -29,27 +36,21 @@ def limpar_console():
     else:
         os.system('clear')
 
-# Loop do menu
-
-denovo = False
-nome = ''
-cpf = ''
-op = 0
-id_inicial = 0
-apostaUsuario = None
-vetor_apostas = []
-usuarioGanha = False
-# Loop do Menu
-while True:
-    if op > 4:
-        limpar_console()
-        print('Digite número de 1 a 4')
+def menu():
     print('----------------------------------------------------------------')
     print('Menu')
     print('1 - Apostar')
     print('2 - Ver minhas apostas')
     print('3 - Apuração e Premiação')	
     print('4 - Sair')
+    print('5 - Deletar Tabelas')
+
+# Loop do Menu
+while True:
+    if op > 4:
+        limpar_console()
+        print('Digite número de 1 a 4')
+    menu()
     
     #Salva primeiro id para quando for mostrar as apostas apenas mostre as do sorteio em execução
     if op == 0:
@@ -64,7 +65,7 @@ while True:
 
     #if para pegar as informações do usuário
     if op == 1:
-        
+        limpar_console()
         nome = input('Seu nome: ')
         
         while not re.match(r'^[a-zA-Z]*$', nome):
@@ -83,7 +84,8 @@ while True:
         
         #Loop para caso não ponha as informações corretas o usuário não possa continuar
         while True:
-            
+            limpar_console()
+            menu()
             surpresa = input('Surpresa? (s/n): ').lower()
             
             if surpresa=='s':
@@ -195,6 +197,8 @@ while True:
         break
     elif op == 4:
         break
+    elif op == 5:
+        servAposta.delecao_de_tabelas()
 
 # Fechar conexão com o banco de dados
 servAposta.fechar_banco()
