@@ -23,10 +23,14 @@ servAposta.criacao_de_tabelas()
 
 nome = ''
 cpf = ''
+
 op = 0
 id_inicial = 0
+
 apostaUsuario = None
 vetor_apostas = []
+
+ja_registrado = True
 
 #metodo que deixa mais limpo o terminal
 def limpar_console():
@@ -141,9 +145,9 @@ while True:
 
         #If para verificar se apostou
         if len(vetor_apostas) == 0:
-            vetor_apostas = servAposta.registrar_apostadores(5)
+            vetor_apostas = servAposta.registrar_apostadores(100)
         else:
-            vetor_apostas.extend(servAposta.registrar_apostadores(5))  
+            vetor_apostas.extend(servAposta.registrar_apostadores(100))  
 
         servApuracao.sortear()
         
