@@ -17,9 +17,9 @@ import os
 ###########################################
 
 
+servSorteio = ServicoSorteio.ServicoSorteio()
 servAposta = ServicoApostas.ServicoApostas()
 servApuracao = ServicoApuracao.ServicoApuracao()
-servSorteio = ServicoSorteio.ServicoSorteio()
 premiacao = Premiacao.Premiacao()
 
 servSorteio.criar_tabela_sorteio()
@@ -63,7 +63,7 @@ while True:
     
     if not sorteio_registrado:
         sorteio_registrado = True
-        servSorteio.registrar_sorteio(0)
+        servSorteio.registrar_sorteio(0, 0)
     
     #Salva primeiro id para quando for mostrar as apostas apenas mostre as do sorteio em execução
     if op == 0:
@@ -93,12 +93,14 @@ while True:
              cpf = input('Seu CPF: ')
              
         #Pega as informações do usuário e armazena no Banco de Dados
-        apostaUsuario = servAposta.registro_usuario(cpf,nome)
+        id_sorteio = servSorteio.get_sorteio_atual()[0]
+        apostaUsuario = servAposta.registro_usuario(cpf,nome,id_sorteio)
         
         #Loop para caso não ponha as informações corretas o usuário não possa continuar
         while True:
             limpar_console()
             menu()
+            
             surpresa = input('Surpresa? (s/n): ').lower()
             
             if surpresa=='s':
@@ -154,9 +156,9 @@ while True:
 
         #If para verificar se apostou
         if len(vetor_apostas) == 0:
-            vetor_apostas = servAposta.registrar_apostadores(100)
+            vetor_apostas = servAposta.registrar_apostadores(100,id_sorteio)
         else:
-            vetor_apostas.extend(servAposta.registrar_apostadores(100))  
+            vetor_apostas.extend(servAposta.registrar_apostadores(100,id_sorteio))  
 
         servSorteio.sortear()
         
@@ -193,7 +195,7 @@ while True:
             premiacao.notficacao_premio(False,num_ganhadores)                       
             ################################################  
 
-        servSorteio.update_sorteio(servSorteio.get_sorteio_atual()[0], num_ganhadores)        
+        servSorteio.update_sorteio(id_sorteio, num_ganhadores)        
         
         #Zera rodadas para o próximo sorteio         
         servSorteio.sorteio.rodadas = 0

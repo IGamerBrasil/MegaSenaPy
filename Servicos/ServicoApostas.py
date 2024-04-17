@@ -25,24 +25,24 @@ class ServicoApostas:
         def delecao_de_tabelas(self):
             self.aBD.deleteBDs()
 
-        def registro_usuario(self,cpf,nome):
-            aposta = self.aBD.identificacaoUsuario(cpf, nome)
+        def registro_usuario(self,cpf,nome,id_sorteio):
+            aposta = self.aBD.identificacaoUsuario(cpf, nome, id_sorteio)
             self.aBD.commitBD()
             return aposta
         
-        def registro_nao_usuario(self,cpf,nome):
-            aposta = self.aBD.identificacaoNaoUsuario(cpf, nome)
+        def registro_nao_usuario(self,cpf,nome,id_sorteio):
+            aposta = self.aBD.identificacaoNaoUsuario(cpf, nome, id_sorteio)
             self.aBD.commitBD()
             return aposta
 
         #Gera Count apostadores para o sorteio
-        def registrar_apostadores(self,count):
+        def registrar_apostadores(self,count,id_sorteio):
             for _ in range(count):
                 nome = gerador.name()
                 cpf = gerador.numerify(text='###########')
                 num_apostas = random.randint(1,6)
                 for _ in range(num_apostas):
-                    aposta = self.registro_nao_usuario(cpf,nome)
+                    aposta = self.registro_nao_usuario(cpf,nome,id_sorteio)
                     self.sist_surpresa(aposta)
             return self.vetor_apostas
 

@@ -36,12 +36,14 @@ class SorteioBD:
     def registrarSorteio(self, num_vencedores, rodadas):
         self.cursorSorteios.execute("""
                                     INSERT INTO sorteios (numero_vencedores, rodadas)
-                                    VALUES (%s, %s,%s);
+                                    VALUES (%s, %s);
                                     """, (num_vencedores, rodadas))
+
         
     def get_sorteio(self):
-        self.cursorSorteios.execute("SELECT * FROM sorteios")
-        return self.cursorSorteios.fetchall()[-1]
+        self.cursorSorteios.execute("SELECT * FROM sorteios;")
+        list = self.cursorSorteios.fetchall()[-1]
+        return list
     
     def update_sorteio(self, id, numero_vencedores, rodadas):
         self.cursorSorteios.execute("""
@@ -62,3 +64,10 @@ class SorteioBD:
                                       """)  
         else:
             print('Tabela nao existe')
+            
+    #Atualiza o Banco    
+    def commitBD(self):
+        self.db_config.commit()
+        
+    def fechaBD(self):
+        self.db_config.close()   

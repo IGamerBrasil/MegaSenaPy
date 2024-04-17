@@ -114,23 +114,13 @@ class ApostaBD:
         self.adicionarNumerosBD(aposta) 
     
     #Adiciona no Banco e retorna aposta       
-    def identificacaoUsuario(self, cpf, nome):
+    def identificacaoUsuario(self, cpf, nome, id_sorteio):
         apostador = Apostas.Aposta(nome, cpf, self.id)
         
-        self.sortBd.connectSorteioBD()
-        
-        self.sortBd.cursorSorteios.execute("SELECT * FROM sorteios")
-        
-        if len(self.sortBd.cursorSorteios.fetchall()) == 0:
-            self.cursorAposta.execute("""
-                                    INSERT INTO aposta (id, cpf, nome,id_sorteio)
-                                    VALUES (%s, %s, %s, %s);
-                                    """, (self.id, cpf, nome, 1))
-        else:
-            self.cursorAposta.execute("""
-                                    INSERT INTO aposta (id, cpf, nome,id_sorteio)
-                                    VALUES (%s, %s, %s, %s);
-                                    """, (self.id, cpf, nome, self.sortBd.cursorSorteios.fetchall()[-1][0]))
+        self.cursorAposta.execute("""
+                                INSERT INTO aposta (id, cpf, nome, id_sorteio)
+                                VALUES (%s, %s, %s, %s);
+                                """, (self.id, cpf, nome, id_sorteio))
         
         self.id+=1
         return apostador

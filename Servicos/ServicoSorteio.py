@@ -17,11 +17,13 @@ class ServicoSorteio:
         self.rep_sorteio.connectSorteioBD() 
         self.rep_sorteio.criar_sorteios_tabela()
     
-    def registrar_sorteio(self, num_vencedores):
-        self.rep_sorteio.registrarSorteio(num_vencedores, self.sorteio.rodadas)
+    def registrar_sorteio(self, num_vencedores,rodadas):
+        self.rep_sorteio.registrarSorteio(num_vencedores, rodadas)
+        self.rep_sorteio.commitBD()
     
     def update_sorteio(self, id, num_vencedores):
         self.rep_sorteio.update_sorteio(id, num_vencedores, self.sorteio.rodadas)
+        self.rep_sorteio.commitBD()
         
     def get_sorteio_atual(self):
         return self.rep_sorteio.get_sorteio()
