@@ -1,3 +1,4 @@
+import random
 from Repositorios import ApostasBD
 from Modelos import Apostas
 from faker import Faker
@@ -17,32 +18,33 @@ class ServicoApostas:
             self.vetor_apostas = []
 
         def criacao_de_tabelas(self):
-            self.aBD.connectBD()
+            self.aBD.connectApostaBD()
             self.aBD.criarTabelas()
         
         #Caso queira excluir os Bancos ponha na ultima linha do App.py, salve, execute e aperte 4           
         def delecao_de_tabelas(self):
             self.aBD.deleteBDs()
 
-        def registro_usuario(self,cpf,nome):
-            aposta = self.aBD.identificacaoUsuario(cpf, nome)
+        def registro_usuario(self,cpf,nome,id_sorteio):
+            aposta = self.aBD.identificacaoUsuario(cpf, nome, id_sorteio)
+            self.aBD.commitBD()
+            return aposta
+        
+        def registro_nao_usuario(self,cpf,nome,id_sorteio):
+            aposta = self.aBD.identificacaoNaoUsuario(cpf, nome, id_sorteio)
             self.aBD.commitBD()
             return aposta
 
         #Gera Count apostadores para o sorteio
-        def registrar_apostadores(self,count):
+        def registrar_apostadores(self,count,id_sorteio):
             for _ in range(count):
                 nome = gerador.name()
                 cpf = gerador.numerify(text='###########')
-                aposta = self.registro_usuario(cpf,nome)
-                self.sist_surpresa(aposta)
-                #self.adicao_de_numeros(aposta,1)
-                #self.adicao_de_numeros(aposta,2)
-                #self.adicao_de_numeros(aposta,3)
-                #self.adicao_de_numeros(aposta,4)
-                #self.adicao_de_numeros(aposta,5)
-                #self.salvaNumeros(aposta) 
-
+                num_apostas = random.randint(1,6)
+                for _ in range(num_apostas):
+                    aposta = self.registro_nao_usuario(cpf,nome,id_sorteio)
+                    self.sist_surpresa(aposta)
+            print(f'Tam vetor_aposta {len(self.vetor_apostas)}')
             return self.vetor_apostas
 
         #Metodo do sistema Surpresinha

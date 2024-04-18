@@ -1,5 +1,4 @@
 from Modelos import Sorteios
-verifaca = False
 
 ##########################################
 # Programa - Sorteio
@@ -10,7 +9,6 @@ verifaca = False
 #Classe Modelo para a fase de apuração
 class Apuracao:
     def __init__(self, sorteio):
-        self.numerosSorteados = None
         if isinstance(sorteio,Sorteios.Sorteio):
             self.sorteio = sorteio
         else:
@@ -27,10 +25,5 @@ class Apuracao:
     def numeroGanhadores(self):
         return len(self.ganhadores)
     
-    def getNumeroDeRodadas(self):
-        if self.sorteio is not None:
-            return self.sorteio.rodadas
-        else:
-            return None
     
         

@@ -10,7 +10,6 @@ from Modelos import Apostas
 #Classe Modelo para a fase de Sorteio
 class Sorteio:
     
-    
     def __init__(self):
         self.numerosSorteados = None
         self.rodadas = 0
@@ -21,12 +20,12 @@ class Sorteio:
     def rodada(self,ganhadores = None, apostas = None):
         if apostas is not None:
             self.rodadas+=1
+            print(f'Len de numerosSorteados {len(self.numerosSorteados)}')
             for a in apostas:
                 if isinstance(a,Apostas.Aposta):
                     if set(a.numeros).issubset(set(self.numerosSorteados)):
                         if a not in ganhadores:
-                            ganhadores.append(a)
-                    
+                            ganhadores.append(a)            
                 
     def sortearExtra(self):
         rand = random.randrange(1,51)

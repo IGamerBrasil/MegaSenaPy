@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 93286719b22bec5bbdb9e392a7e182bd55bbd23c
+>>>>>>> be6c7b5db5668c5a96ba3b4153b2941c94c5163c
 Exercício de Lucas Candemil Chagas
 
 Passos para a execução do programa:
@@ -7,3 +14,21 @@ Passos para a execução do programa:
 
 
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+Para executar o programa primeiro precisa instalar a lib do myslq.connector:
+    pip install mysql
+    pip install mysql.connector
+Depois precisa se conectar ao seu banco de dados:
+    host="localhost",
+    user="root",
+    database="dell",
+    password="root"
+Ponha as informações do seu banco acima, ou crie um novo
+Depois de Run no App.py
+>>>>>>> ad823e647dc7626f514778a57775029a54207a51
+>>>>>>> 93286719b22bec5bbdb9e392a7e182bd55bbd23c
+>>>>>>> be6c7b5db5668c5a96ba3b4153b2941c94c5163c

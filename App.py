@@ -1,5 +1,7 @@
 from Servicos import ServicoApostas
 from Servicos import ServicoApuracao
+from Servicos import ServicoSorteio
+
 from Modelos import Apostas
 from Modelos import Premiacao
 
@@ -15,11 +17,25 @@ import os
 ###########################################
 
 
+servSorteio = ServicoSorteio.ServicoSorteio()
 servAposta = ServicoApostas.ServicoApostas()
-servApuracao = ServicoApuracao.ServicoApuracao()
+servApuracao = ServicoApuracao.ServicoApuracao(servSorteio)
 premiacao = Premiacao.Premiacao()
 
+servSorteio.criar_tabela_sorteio()
 servAposta.criacao_de_tabelas()
+
+nome = ''
+cpf = ''
+
+op = 0
+id_inicial = 0
+
+apostaUsuario = None
+vetor_apostas = []
+
+ja_registrado = True
+sorteio_registrado = False
 
 #metodo que deixa mais limpo o terminal
 def limpar_console():
@@ -29,27 +45,26 @@ def limpar_console():
     else:
         os.system('clear')
 
-# Loop do menu
-
-denovo = False
-nome = ''
-cpf = ''
-op = 0
-id_inicial = 0
-apostaUsuario = None
-vetor_apostas = []
-usuarioGanha = False
-# Loop do Menu
-while True:
-    if op > 4:
-        limpar_console()
-        print('Digite número de 1 a 4')
+def menu():
     print('----------------------------------------------------------------')
     print('Menu')
     print('1 - Apostar')
     print('2 - Ver minhas apostas')
     print('3 - Apuração e Premiação')	
     print('4 - Sair')
+    print('5 - Deletar Tabelas')
+
+# Loop do Menu
+while True:
+    if op > 5:
+        limpar_console()
+        print('Digite número de 1 a 5')
+    menu()
+    
+    if not sorteio_registrado:
+        sorteio_registrado = True
+        servSorteio.registrar_sorteio(0, 0)
+        id_sorteio = servSorteio.get_sorteio_atual()[0]
     
     #Salva primeiro id para quando for mostrar as apostas apenas mostre as do sorteio em execução
     if op == 0:
@@ -64,7 +79,7 @@ while True:
 
     #if para pegar as informações do usuário
     if op == 1:
-        
+        limpar_console()
         nome = input('Seu nome: ')
         
         while not re.match(r'^[a-zA-Z]*$', nome):
@@ -79,16 +94,19 @@ while True:
              cpf = input('Seu CPF: ')
              
         #Pega as informações do usuário e armazena no Banco de Dados
-        apostaUsuario = servAposta.registro_usuario(cpf,nome)
+        apostaUsuario = servAposta.registro_usuario(cpf,nome,id_sorteio)
         
         #Loop para caso não ponha as informações corretas o usuário não possa continuar
         while True:
+            limpar_console()
+            menu()
             
             surpresa = input('Surpresa? (s/n): ').lower()
             
             if surpresa=='s':
                 servAposta.sist_surpresa(apostaUsuario)
                 vetor_apostas.append(apostaUsuario)
+                print('Inserido')
                 
                 limpar_console()
                 print('APOSTADO!!') 
@@ -139,47 +157,53 @@ while True:
 
         #If para verificar se apostou
         if len(vetor_apostas) == 0:
-            vetor_apostas = servAposta.registrar_apostadores(5)
+            print('nao apostou')
+            vetor_apostas = servAposta.registrar_apostadores(100,id_sorteio)
         else:
-            vetor_apostas.extend(servAposta.registrar_apostadores(5))  
+            print('apostou')
+            vetor_apostas.extend(servAposta.registrar_apostadores(100,id_sorteio))  
 
-        servApuracao.sortear()
+        servSorteio.sortear()
+        print(f'Len de Serv numerosSorteados {len(servSorteio.sorteio.numerosSorteados)}')
         
         #Pega todas as apostas e verifica quem ganhou
         servApuracao.verificarGanhadores(vetor_apostas)
         
-        if servApuracao.sorteio.rodadas < 15:
-            print(f'Sorteio Terminado com {servApuracao.sorteio.rodadas} RODADAS QUE RAPIDO!!')
+        if servSorteio.getNumeroDeRodadas() < 15:
+            print(f'Sorteio Terminado com {servSorteio.getNumeroDeRodadas()} RODADAS QUE RAPIDO!!')
         else:
-            print(f'Desculpe a demora, chegamos no final em {servApuracao.sorteio.rodadas} rodadas...')
+            print(f'Desculpe a demora, chegamos no final em {servSorteio.getNumeroDeRodadas()} rodadas...')
             
         print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
-        print(f'Numeros Sorteados: {servApuracao.lista_de_num_sorteados()}')
+        print(f'Numeros Sorteados: {servSorteio.lista_de_num_sorteados()}')
         print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
         
         #Verifica se a algum ganhador depois das rodadas
-        t_apuracao = len(servApuracao.apuracao.ganhadores)
-        if t_apuracao == 0:
+        num_ganhadores = len(servApuracao.apuracao.ganhadores)
+        if num_ganhadores == 0:
             print('Nao a Ganhadores :(')
         else:
-            print(f'Quantidade de Ganhadores: {t_apuracao}')
+            print(f'Quantidade de Ganhadores: {num_ganhadores}')
             print(' ')
             print('Aposta(s) do(s) Ganhador(es): ')
             
             #Imprimi Ganhadores
-            l = len(servApuracao.lista_das_apostas_ganhadoras_em_ordem()) 
             for a in servApuracao.lista_das_apostas_ganhadoras_em_ordem():
                 if isinstance(a,Apostas.Aposta):                     
                     print(f'Nome: {a.nome} - {a.numeros}')
                     if a == apostaUsuario:
-                        premiacao.notficacao_premio(True,l)       
+                        premiacao.notficacao_premio(True,num_ganhadores)       
                 print(' ')
+            
             #Fase Premiação################################
-            premiacao.notficacao_premio(False,l)                        
+            premiacao.notficacao_premio(False,num_ganhadores)                       
             ################################################  
+
+        print(f'ID sorteio {id_sorteio}')
+        servSorteio.update_sorteio(id_sorteio, num_ganhadores, servSorteio.getNumeroDeRodadas())        
         
         #Zera rodadas para o próximo sorteio         
-        servApuracao.sorteio.rodadas = 0
+        servSorteio.sorteio.rodadas = 0
         veti = servApuracao.maior_ao_menor_num_aparecido(vetor_apostas)
         
         if isinstance(veti, dict):
@@ -191,9 +215,14 @@ while True:
         for i,j in vetf:
             print(f'|  {i}                            {j}   |') 
         print('------------------------------------')
-     
+        sorteio_registrado = False
         break
     elif op == 4:
+        break
+    elif op == 5:
+        servAposta.delecao_de_tabelas()
+        servSorteio.delecao_de_tabela_sorteio()
+        limpar_console()
         break
 
 # Fechar conexão com o banco de dados
