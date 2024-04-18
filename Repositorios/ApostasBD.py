@@ -143,7 +143,7 @@ class ApostaBD:
                                             VALUES (%s, %s, %s, %s, %s, %s);
                                             """,(aposta.numeros[0], aposta.numeros[1], aposta.numeros[2], aposta.numeros[3], aposta.numeros[4], aposta.id))
     #Retorna todas as aposta do cpf específico
-    def mostrar_apostas(self, cpf):
+    def mostrar_apostas(self, cpf, id_sorteio):
         
         #seleciona todas as aposta do cpf específico
         self.cursorNumerosAposta.execute(f"""
@@ -157,7 +157,8 @@ class ApostaBD:
                                             FROM aposta a 
                                             LEFT JOIN numeros_aposta na 
                                                    ON a.id = na.id_aposta
-                                            WHERE a.cpf = {cpf};
+                                            WHERE a.cpf = {cpf}
+                                                AND a.id_sorteio = {id_sorteio};
                                          """)
 
         return self.cursorNumerosAposta.fetchall()

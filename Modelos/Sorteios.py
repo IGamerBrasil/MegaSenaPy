@@ -15,13 +15,11 @@ class Sorteio:
         self.rodadas = 0
 
     def sortearNumeros(self):
-        self.numerosSorteados = [1,2,3,4,5]  #random.sample(range(1,51),5)
-        print(f'Len de numerosSorteados {len(self.numerosSorteados)}')
+        self.numerosSorteados = random.sample(range(1,51),5)
     
     def rodada(self,ganhadores = None, apostas = None):
         if apostas is not None:
             self.rodadas+=1
-            print(f'Len de numerosSorteados {len(self.numerosSorteados)}')
             for a in apostas:
                 if isinstance(a,Apostas.Aposta):
                     if set(a.numeros).issubset(set(self.numerosSorteados)):

@@ -44,7 +44,6 @@ class ServicoApostas:
                 for _ in range(num_apostas):
                     aposta = self.registro_nao_usuario(cpf,nome,id_sorteio)
                     self.sist_surpresa(aposta)
-            print(f'Tam vetor_aposta {len(self.vetor_apostas)}')
             return self.vetor_apostas
 
         #Metodo do sistema Surpresinha
@@ -66,8 +65,8 @@ class ServicoApostas:
             self.aBD.commitBD()
 
         #Metodo que retorna todas as apostas dentro do banco
-        def visualizador_numeros_apostados_por_cpf(self, cpf):
-            return self.aBD.mostrar_apostas(cpf)
+        def visualizador_numeros_apostados_por_cpf(self, cpf, id_sorteio):
+            return self.aBD.mostrar_apostas(cpf, id_sorteio)
 
         #Metodo para encerrar comunicacao com o banco
         def fechar_banco(self):

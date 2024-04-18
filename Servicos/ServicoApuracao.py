@@ -16,7 +16,6 @@ class ServicoApuracao():
 
     #Vê quem ganhou, caso nao tenha ele faz rodadas extra
     def verificarGanhadores(self,vetApostas):
-        print(f'Len de Serv numerosSorteados {len(self.servSorteio.sorteio.numerosSorteados)}')
         if vetApostas is not None:
             self.apuracao.verificaGanhador(vetApostas)
             ganhadores_sorteio = self.apuracao.ganhadores

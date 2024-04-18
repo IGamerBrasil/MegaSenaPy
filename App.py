@@ -34,7 +34,7 @@ id_inicial = 0
 apostaUsuario = None
 vetor_apostas = []
 
-ja_registrado = True
+ja_registrado = False
 sorteio_registrado = False
 
 #metodo que deixa mais limpo o terminal
@@ -52,13 +52,13 @@ def menu():
     print('2 - Ver minhas apostas')
     print('3 - Apuração e Premiação')	
     print('4 - Sair')
-    print('5 - Deletar Tabelas')
+    #print('5 - Deletar Tabelas')
 
 # Loop do Menu
 while True:
-    if op > 5:
+    if op > 4:
         limpar_console()
-        print('Digite número de 1 a 5')
+        print('Digite número de 1 a 4')
     menu()
     
     if not sorteio_registrado:
@@ -80,19 +80,21 @@ while True:
     #if para pegar as informações do usuário
     if op == 1:
         limpar_console()
-        nome = input('Seu nome: ')
-        
-        while not re.match(r'^[a-zA-Z]*$', nome):
-            print('Nome invalido!')
+        if not ja_registrado:
             nome = input('Seu nome: ')
-                
-        cpf = input('Seu CPF: ')
-        
-        #Loop para verificação de autenticação de CPF
-        while len(cpf) != 11 or not re.match(r'^[0-9]*$', cpf):
-             print('CPF invalido!')
-             cpf = input('Seu CPF: ')
-             
+
+            while not re.match(r'^[a-zA-Z]*$', nome):
+                print('Nome invalido!')
+                nome = input('Seu nome: ')
+
+            cpf = input('Seu CPF: ')
+
+            #Loop para verificação de autenticação de CPF
+            while len(cpf) != 11 or not re.match(r'^[0-9]*$', cpf):
+                 print('CPF invalido!')
+                 cpf = input('Seu CPF: ')
+            ja_registrado = True
+
         #Pega as informações do usuário e armazena no Banco de Dados
         apostaUsuario = servAposta.registro_usuario(cpf,nome,id_sorteio)
         
@@ -135,7 +137,7 @@ while True:
         limpar_console()
         if apostaUsuario is not None:
             
-            apostas = servAposta.visualizador_numeros_apostados_por_cpf(apostaUsuario.cpf)
+            apostas = servAposta.visualizador_numeros_apostados_por_cpf(apostaUsuario.cpf, id_sorteio)
             
             if not apostas:
                 print('Não há apostas registradas.')
@@ -157,14 +159,11 @@ while True:
 
         #If para verificar se apostou
         if len(vetor_apostas) == 0:
-            print('nao apostou')
             vetor_apostas = servAposta.registrar_apostadores(100,id_sorteio)
         else:
-            print('apostou')
             vetor_apostas.extend(servAposta.registrar_apostadores(100,id_sorteio))  
 
         servSorteio.sortear()
-        print(f'Len de Serv numerosSorteados {len(servSorteio.sorteio.numerosSorteados)}')
         
         #Pega todas as apostas e verifica quem ganhou
         servApuracao.verificarGanhadores(vetor_apostas)
@@ -199,7 +198,6 @@ while True:
             premiacao.notficacao_premio(False,num_ganhadores)                       
             ################################################  
 
-        print(f'ID sorteio {id_sorteio}')
         servSorteio.update_sorteio(id_sorteio, num_ganhadores, servSorteio.getNumeroDeRodadas())        
         
         #Zera rodadas para o próximo sorteio         
@@ -219,11 +217,11 @@ while True:
         break
     elif op == 4:
         break
-    elif op == 5:
-        servAposta.delecao_de_tabelas()
-        servSorteio.delecao_de_tabela_sorteio()
-        limpar_console()
-        break
+    #elif op == 5:
+    #    servAposta.delecao_de_tabelas()
+    #    servSorteio.delecao_de_tabela_sorteio()
+    #    limpar_console()
+    #    break
 
 # Fechar conexão com o banco de dados
 servAposta.fechar_banco()
