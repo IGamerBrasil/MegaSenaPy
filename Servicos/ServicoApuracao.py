@@ -16,18 +16,18 @@ class ServicoApuracao():
     def sortear(self):
        self.sorteio.sortearNumeros()
     
-    #Vê quem venceu, caso nao tenha ele faz rodadas extra
-    def verificarVencedores(self,vetApostas):
+    #Vê quem ganhou, caso nao tenha ele faz rodadas extra
+    def verificarGanhadores(self,vetApostas):
         if vetApostas is not None:
-            self.apuracao.verificaVencedor(vetApostas)
-            vencs_sorteio = self.apuracao.vencedores
-            if not len(vencs_sorteio):
-                print('PUTZ!! Ninguem ganhou, por essa nao esperavamos, por isso daremos mais 25 CHANCES!!')
+            self.apuracao.verificaGanhador(vetApostas)
+            ganhadores_sorteio = self.apuracao.ganhadores
+            if not len(ganhadores_sorteio):
+                print('Ninguem ganhou, por essa nao esperavamos, por isso daremos mais 25 CHANCES!!')
                 print(' ')
                 for _ in range(25):
                     self.sorteio.sortearExtra()
-                    self.apuracao.verificaVencedor(vetApostas)
-                    if len(vencs_sorteio) > 0:
+                    self.apuracao.verificaGanhador(vetApostas)
+                    if len(ganhadores_sorteio) > 0:
                         break
         else:
             return None
@@ -49,8 +49,8 @@ class ServicoApuracao():
         return dict
     
     #Ordena em ordem alfabética de acordo com o nome
-    def lista_das_apostas_vencedoras_em_ordem(self):
-        return sorted(self.apuracao.vencedores, key=lambda x: x.nome)
+    def lista_das_apostas_ganhadoras_em_ordem(self):
+        return sorted(self.apuracao.ganhadores, key=lambda x: x.nome)
         
                       
     def lista_de_num_sorteados(self):           

@@ -22,7 +22,7 @@ class ApostaBD:
                     database="dell",
                     password="root"
                     )
-        
+    
     #Conexão com o Banco de dados
     def connectBD(self):
         self.cursorAposta = self.db_config.cursor()
@@ -30,6 +30,18 @@ class ApostaBD:
         
     #Criação das Tabela  
     def criarTabelas(self):
+        
+        nome_banco = 'dell'
+        self.cursorAposta.execute(f"SHOW DATABASES LIKE '{nome_banco}'")
+        
+        banco_existe = self.cursorAposta.fetchone()
+        if banco_existe:
+            print(f'O banco de dados {nome_banco} já existe.')
+        else:
+            comando_sql=f'CREATE DATABASE {nome_banco}'
+            self.cursorAposta.execute(comando_sql)
+            print(f'Banco de dados {nome_banco} criado com sucesso!')
+    
         
         #Result é verdadeiro se existir tabela de aposta
         self.cursorAposta.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "aposta"))
@@ -70,9 +82,7 @@ class ApostaBD:
                                 )
                                 """
         self.cursorNumerosAposta.execute(self.create_table_query)
-        print("CriadaNumeros")
-        
-        
+             
     #insercao de dados no banco
     
     def adicionarNumero(self, aposta, num):
@@ -80,7 +90,7 @@ class ApostaBD:
         #Verifica se num esta no intervalo 1 a 50, juntamente se num não esta na aposta e se a aposta ainda não tem 5 números
         if num in range(1,51) and num not in aposta.numeros and len(aposta.numeros) < 5:
             aposta.numeros.append(num)
-            
+
     #Sistema Surpresinha            
     def surpresinha(self, aposta):
         aposta.numeros = random.sample(range(1,51),5)

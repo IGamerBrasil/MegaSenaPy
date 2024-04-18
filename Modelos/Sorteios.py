@@ -16,16 +16,16 @@ class Sorteio:
         self.rodadas = 0
 
     def sortearNumeros(self):
-        self.numerosSorteados = [1,2,3,4,5]#random.sample(range(1,51),5)
+        self.numerosSorteados = [1,2,3,4,5]  #random.sample(range(1,51),5)
     
-    def rodada(self,vencedores = None, apostas = None):
+    def rodada(self,ganhadores = None, apostas = None):
         if apostas is not None:
             self.rodadas+=1
             for a in apostas:
                 if isinstance(a,Apostas.Aposta):
                     if set(a.numeros).issubset(set(self.numerosSorteados)):
-                        if a not in vencedores:
-                            vencedores.append(a)
+                        if a not in ganhadores:
+                            ganhadores.append(a)
                     
                 
     def sortearExtra(self):
