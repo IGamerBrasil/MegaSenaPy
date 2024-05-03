@@ -3,13 +3,8 @@ import random
 
 class SorteioBD:
     #Criação do banco de dados
-    def __init__(self):
-        self.db_config = mysql.connector.connect(
-                    host="localhost",
-                    user="root",
-                    database="dell",
-                    password="root"
-                    )
+    def __init__(self, connector):
+        self.db_config = connector
             
     #Conexão com o Banco de dados
     def connectSorteioBD(self):

@@ -3,9 +3,9 @@ from Repositorios import SorteioBD
 
 
 class ServicoSorteio:
-    def __init__(self):
+    def __init__(self,connector):
         self.sorteio = Sorteios.Sorteio()
-        self.rep_sorteio = SorteioBD.SorteioBD()
+        self.rep_sorteio = SorteioBD.SorteioBD(connector)
         
     def sortear(self):
         self.sorteio.sortearNumeros()

@@ -1,6 +1,8 @@
 from Servicos import ServicoApostas
 from Servicos import ServicoApuracao
 from Servicos import ServicoSorteio
+from Servicos import ServicoConexaoUnica
+
 
 from Modelos import Apostas
 from Modelos import Premiacao
@@ -16,9 +18,9 @@ import os
 # Data -     03/24/2024
 ###########################################
 
-
-servSorteio = ServicoSorteio.ServicoSorteio()
-servAposta = ServicoApostas.ServicoApostas()
+connector = ServicoConexaoUnica.ServicoConexaoUnica()
+servSorteio = ServicoSorteio.ServicoSorteio(connector.bd.db_config)
+servAposta = ServicoApostas.ServicoApostas(connector.bd.db_config)
 servApuracao = ServicoApuracao.ServicoApuracao(servSorteio)
 premiacao = Premiacao.Premiacao()
 

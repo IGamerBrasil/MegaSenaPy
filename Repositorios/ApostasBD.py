@@ -14,16 +14,11 @@ gerador = Faker()
 #Classe que mexe diretamente com o Banco
 class ApostaBD:
     #Criação do banco de dados
-    def __init__(self):
+    def __init__(self, connector):
         #id da aposta no banco de dados
         self.id = 1000
-        self.db_config = mysql.connector.connect(
-                    host="localhost",
-                    user="root",
-                    database="dell",
-                    password="root"
-                    )
-        self.sortBd = SorteioBD.SorteioBD()
+        self.db_config = connector
+        self.sortBd = SorteioBD.SorteioBD(connector)
         
     #Conexão com o Banco de dados
     def connectApostaBD(self):

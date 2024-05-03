@@ -13,8 +13,8 @@ gerador = Faker()
 
 #Classe para o App.py nao ter acesso direto ao Banco de Dadods
 class ServicoApostas:
-        def __init__(self):
-            self.aBD = ApostasBD.ApostaBD()
+        def __init__(self,connector):
+            self.aBD = ApostasBD.ApostaBD(connector)
             self.vetor_apostas = []
 
         def criacao_de_tabelas(self):
