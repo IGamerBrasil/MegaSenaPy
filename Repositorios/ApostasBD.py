@@ -62,8 +62,6 @@ class ApostaBD:
                                     id_sorteio int NOT NULL,
                                     FOREIGN KEY (id_sorteio) REFERENCES sorteios(id)
                                 );
-                                
-                                CREATE INDEX idx_cpf ON aposta(cpf);
                                """
             self.cursorAposta.execute(self.create_table_query)
         else:
@@ -89,8 +87,6 @@ class ApostaBD:
                                     id_aposta int NOT NULL,
                                     FOREIGN KEY (id_aposta) REFERENCES aposta(id)
                                 );
-                                
-                                CREATE INDEX idx_id_aposta ON numeros_aposta(id_aposta);
                                 """
             self.cursorNumerosAposta.execute(self.create_table_query)
              
