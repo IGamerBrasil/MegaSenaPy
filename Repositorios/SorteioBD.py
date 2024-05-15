@@ -22,27 +22,25 @@ class SorteioBD:
                                 CREATE TABLE sorteios (
                                     id int AUTO_INCREMENT PRIMARY KEY NOT NULL,
                                     numero_vencedores int NOT NULL,
-                                    rodadas int NOT NULL
+                                    rodadas int NOT NULL,
+                                    valor_premio int NOT NULL
                                 );
                                """
             self.cursorSorteios.execute(self.create_table_query)
     
     
-    def registrarSorteio(self, num_vencedores, rodadas):
+    def registrarSorteio(self, num_vencedores, rodadas, valor_premio):
         self.cursorSorteios.execute("""
-                                    INSERT INTO sorteios (numero_vencedores, rodadas)
-                                    VALUES (%s, %s);
-                                    """, (num_vencedores, rodadas))
+                                    INSERT INTO sorteios (numero_vencedores, rodadas, valor_premio)
+                                    VALUES (%s, %s, %s);
+                                    """, (num_vencedores, rodadas, valor_premio))
 
         
     def get_sorteio_atual(self):
-        self.cursorSorteios.execute("""SELECT * 
-                                       FROM sorteios
-                                       LIMIT 1
-                                       """)
+        self.cursorSorteios.execute("""SELECT LAST_INSERT_ID()""")
         return self.cursorSorteios.fetchone()
     
-    def update_sorteio(self, id, numero_vencedores, rodadas):
+    def update_sorteio(self, id, numero_vencedores, rodadas, valor_premio):
         self.cursorSorteios.execute("""
                                     UPDATE sorteios
                                     SET numero_vencedores = %s 
@@ -54,6 +52,12 @@ class SorteioBD:
                                     SET rodadas = %s 
                                     WHERE id = %s
                                     """,(rodadas,id))
+        
+        self.cursorSorteios.execute("""
+                                    UPDATE sorteios
+                                    SET valor_premio = %s 
+                                    WHERE id = %s
+                                    """,(valor_premio,id))
         
         
     def get_sorteios(self):
