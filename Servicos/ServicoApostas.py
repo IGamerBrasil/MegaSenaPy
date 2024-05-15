@@ -20,6 +20,7 @@ class ServicoApostas:
         def criacao_de_tabelas(self):
             self.aBD.connectApostaBD()
             self.aBD.criarTabelas()
+            self.aBD.criar_indexes_cpf_ids()
         
         #Caso queira excluir os Bancos ponha na ultima linha do App.py, salve, execute e aperte 4           
         def delecao_de_tabelas(self):

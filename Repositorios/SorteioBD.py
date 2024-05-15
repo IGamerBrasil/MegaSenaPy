@@ -35,10 +35,12 @@ class SorteioBD:
                                     """, (num_vencedores, rodadas))
 
         
-    def get_sorteio(self):
-        self.cursorSorteios.execute("SELECT * FROM sorteios;")
-        list = self.cursorSorteios.fetchall()[-1]
-        return list
+    def get_sorteio_atual(self):
+        self.cursorSorteios.execute("""SELECT * 
+                                       FROM sorteios
+                                       LIMIT 1
+                                       """)
+        return self.cursorSorteios.fetchone()
     
     def update_sorteio(self, id, numero_vencedores, rodadas):
         self.cursorSorteios.execute("""
@@ -52,6 +54,18 @@ class SorteioBD:
                                     SET rodadas = %s 
                                     WHERE id = %s
                                     """,(rodadas,id))
+        
+        
+    def get_sorteios(self):
+        self.cursorSorteios.execute("SELECT * FROM sorteios")
+        return self.cursorSorteios.fetchall()
+    
+    def mostrar_sorteio(self, id):
+        self.cursorSorteios.execute("""SELECT * 
+                                       FROM sorteios
+                                       WHERE id = %s
+                                       """,(id,))
+        return self.cursorSorteios.fetchone()
         
     def deleteSorteioBD(self):
         self.cursorSorteios.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "sorteios"))

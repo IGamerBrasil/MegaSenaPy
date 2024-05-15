@@ -89,9 +89,67 @@ class ApostaBD:
                                 );
                                 """
             self.cursorNumerosAposta.execute(self.create_table_query)
-             
+            
+    def criar_indexes_cpf_ids(self):
+        
+        #Criacao index id_aposta
+        self.cursorNumerosAposta.execute("""SELECT INDEX_NAME
+                                            FROM information_schema.statistics
+                                            WHERE table_schema = %s
+                                            AND table_name = %s
+                                            AND index_name = %s;
+                                         """, (self.db_config.database, "numeros_aposta","idx_id_aposta")) 
+        
+        #Result é verdadeiro se existir tabela de numeros_aposta     
+        result = self.cursorNumerosAposta.fetchone()   
+        
+        #if para impedir que se crie mais de uma vez a tabela 
+        if not result:
+            self.create_table_query = """
+                                CREATE INDEX idx_id_aposta ON numeros_aposta(id_aposta);
+                                """
+            self.cursorNumerosAposta.execute(self.create_table_query)
+        
+        #Criacao index cpf 
+        self.cursorAposta.execute("""SELECT INDEX_NAME
+                                            FROM information_schema.statistics
+                                            WHERE table_schema = %s
+                                            AND table_name = %s
+                                            AND index_name = %s;
+                                         """, (self.db_config.database, "aposta","idx_cpf")) 
+        
+        #Result é verdadeiro se existir tabela de numeros_aposta     
+        result = self.cursorAposta.fetchone()   
+        
+        #if para impedir que se crie mais de uma vez a tabela 
+        if not result:
+            self.create_table_query = """
+                                CREATE INDEX idx_cpf ON aposta(cpf);
+                                """
+            self.cursorAposta.execute(self.create_table_query)
+            
+            
+        #Criacao index id_sorteio
+        self.cursorAposta.execute("""SELECT INDEX_NAME
+                                            FROM information_schema.statistics
+                                            WHERE table_schema = %s
+                                            AND table_name = %s
+                                            AND index_name = %s;
+                                         """, (self.db_config.database, "aposta","idx_id_sorteio")) 
+        
+        #Result é verdadeiro se existir tabela de numeros_aposta     
+        result = self.cursorAposta.fetchone()   
+        
+        #if para impedir que se crie mais de uma vez a tabela 
+        if not result:
+            self.create_table_query = """
+                                CREATE INDEX idx_id_sorteio ON aposta(id_sorteio);
+                                """
+            self.cursorAposta.execute(self.create_table_query)
+            
+            
+        
     #insercao de dados no banco
-    
     def adicionarNumero(self, aposta, num):
         
         #Verifica se num esta no intervalo 1 a 50, juntamente se num não esta na aposta e se a aposta ainda não tem 5 números

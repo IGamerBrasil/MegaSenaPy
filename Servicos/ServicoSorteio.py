@@ -26,7 +26,13 @@ class ServicoSorteio:
         self.rep_sorteio.commitBD()
         
     def get_sorteio_atual(self):
-        return self.rep_sorteio.get_sorteio()
+        return self.rep_sorteio.get_sorteio_atual()
+    
+    def get_sorteios(self):
+        return self.rep_sorteio.get_sorteios()
+
+    def get_sorteio(self, id):
+        return self.rep_sorteio.mostrar_sorteio(id)
     
     def getNumeroDeRodadas(self):
         if self.sorteio is not None:
