@@ -11,10 +11,10 @@ class ConexaoBD(iRepConexaoBD):
    def __init__(self):
       #id da aposta no banco de dados
       self.__db_config = mysql.connector.connect(
-                  host="localhost",
-                  user="root",
-                  database="dell",
-                  password="root"
+                  host="",
+                  user="",
+                  database="",
+                  password=""
                   )
       
    @property
