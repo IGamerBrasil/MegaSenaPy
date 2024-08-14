@@ -1,3 +1,8 @@
+##########################################
+# Programa - Sorteio
+# Autor -    Lucas Candemil Chagas
+###########################################
+
 class Premiacao():
     def __init__(self):
         self.valor = 0

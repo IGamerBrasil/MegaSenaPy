@@ -2,16 +2,25 @@ from Modelos import Sorteios
 from Repositorios import SorteioBD
 
 
-class ServicoSorteio:
-    def __init__(self,connector):
-        self.sorteio = Sorteios.Sorteio()
-        self.rep_sorteio = SorteioBD.SorteioBD(connector)
-        
+##########################################
+# Programa - ServicoSorteio
+# Autor -    Lucas Candemil Chagas
+###########################################
+
+class ServicoSorteio(Sorteios.Sorteio):
+    def __init__(self):
+        super().__init__()
+        self.__rep_sorteio = SorteioBD.SorteioBD()
+    
+    @property
+    def rep_sorteio(self):
+        return self.__rep_sorteio
+       
     def sortear(self):
-        self.sorteio.sortearNumeros()
+        self.sortearNumeros()
         
     def lista_de_num_sorteados(self):           
-         return self.sorteio.numerosSorteados   
+         return self.numerosSorteados   
 
     def criar_tabela_sorteio(self):
         self.rep_sorteio.connectSorteioBD() 
@@ -19,11 +28,11 @@ class ServicoSorteio:
     
     def registrar_sorteio(self, num_vencedores, rodadas, valor_premio):
         self.rep_sorteio.registrarSorteio(num_vencedores, rodadas, valor_premio)
-        self.rep_sorteio.commitBD()
+        self.__commitSorteios()
     
     def update_sorteio(self, id, num_vencedores, rodadas, valor_premio):
         self.rep_sorteio.update_sorteio(id, num_vencedores, rodadas, valor_premio)
-        self.rep_sorteio.commitBD()
+        self.__commitSorteios()
         
     def get_sorteio_atual(self):
         return self.rep_sorteio.get_sorteio_atual()
@@ -35,10 +44,10 @@ class ServicoSorteio:
         return self.rep_sorteio.mostrar_sorteio(id)
     
     def getNumeroDeRodadas(self):
-        if self.sorteio is not None:
-            return self.sorteio.rodadas
-        else:
-            return 0  
+        return self.rodadas
           
     def delecao_de_tabela_sorteio(self):
         self.rep_sorteio.deleteSorteioBD()
+        
+    def __commitSorteios(self):
+        self.rep_sorteio.conexao.commitBD()

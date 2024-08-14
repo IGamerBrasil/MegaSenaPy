@@ -1,18 +1,28 @@
-import mysql.connector
-import random
+from Repositorios.iRepositorios.iRepSorteio import iRepSorteio
+from Repositorios import ConexaoBD
 
-class SorteioBD:
+
+##########################################
+# Programa - Sorteio
+# Autor -    Lucas Candemil Chagas
+###########################################
+
+class SorteioBD(iRepSorteio):
     #Criação do banco de dados
-    def __init__(self, connector):
-        self.db_config = connector
-            
+    def __init__(self):
+        self.__conexao = ConexaoBD.ConexaoBD()
+    
+    @property
+    def conexao(self):
+        return self.__conexao
+           
     #Conexão com o Banco de dados
     def connectSorteioBD(self):
         #mexe com a tabela dos sorteios realizados
-        self.cursorSorteios = self.db_config.cursor()
+        self.cursorSorteios = self.conexao.db_config.cursor()
     
     def criar_sorteios_tabela(self):
-        self.cursorSorteios.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "sorteios"))
+        self.cursorSorteios.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.conexao.db_config.database, "sorteios"))
         
         #Result é verdadeiro se existir tabela de aposta
         result = self.cursorSorteios.fetchone()
@@ -72,7 +82,7 @@ class SorteioBD:
         return self.cursorSorteios.fetchone()
         
     def deleteSorteioBD(self):
-        self.cursorSorteios.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "sorteios"))
+        self.cursorSorteios.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.conexao.db_config.database, "sorteios"))
         
         #Result é verdadeiro se existir tabela de aposta
         result = self.cursorSorteios.fetchone()
@@ -83,9 +93,4 @@ class SorteioBD:
         else:
             print('Tabela nao existe')
             
-    #Atualiza o Banco    
-    def commitBD(self):
-        self.db_config.commit()
-        
-    def fechaBD(self):
-        self.db_config.close()   
+

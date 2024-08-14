@@ -4,7 +4,6 @@ from Modelos import Apostas
 ##########################################
 # Programa - Sorteio
 # Autor -    Lucas Candemil Chagas
-# Data -     03/24/2024
 ###########################################
 
 #Classe Modelo para a fase de Sorteio
@@ -21,11 +20,21 @@ class Sorteio:
         if apostas is not None:
             self.rodadas+=1
             for a in apostas:
-                if isinstance(a,Apostas.Aposta):
-                    if set(a.numeros).issubset(set(self.numerosSorteados)):
+                if self.__verifica_tipo(a, Apostas.Aposta):
+                    if self.__verifica_interseccao(a.numeros, self.numerosSorteados):
                         if a not in ganhadores:
                             ganhadores.append(a)            
-                
+     
+    def __verifica_tipo(self, variavel, tipo):
+        if isinstance(variavel, tipo):
+            return True
+        return False 
+    
+    def __verifica_interseccao(self, lista1, lista2):
+        if set(lista1).issubset(set(lista2)):
+            return True
+        return False
+               
     def sortearExtra(self):
         rand = random.randrange(1,51)
         while rand in self.numerosSorteados:

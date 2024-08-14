@@ -1,7 +1,7 @@
-import mysql.connector
+from Repositorios.iRepositorios.iRepApostas import iRepAposta
+from Repositorios.ConexaoBD import ConexaoBD
 import random
 from Modelos import Apostas
-from Repositorios import SorteioBD
 from faker import Faker
 gerador = Faker()
 
@@ -12,23 +12,32 @@ gerador = Faker()
 ###########################################
 
 #Classe que mexe diretamente com o Banco
-class ApostaBD:
+class ApostaBD(iRepAposta):
     #Criação do banco de dados
-    def __init__(self, connector):
+    def __init__(self):
         #id da aposta no banco de dados
-        self.id = 1000
-        self.db_config = connector
-        self.sortBd = SorteioBD.SorteioBD(connector)
-        
+        self.__id = 1000
+        self.__conexao = ConexaoBD()
+
+    @property
+    def conexao(self):
+        return self.__conexao
+    
+    @property
+    def id(self):
+        return self.__id
+    
+    @id.setter
+    def id(self, novo_id):
+        self.__id = novo_id 
+       
     #Conexão com o Banco de dados
     def connectApostaBD(self):
         #mexe com a tabela de apostas
-        self.cursorAposta = self.db_config.cursor()
+        self.cursorAposta = self.__conexao.db_config.cursor()
         #mexe com a tabela dos numeros sorteados
-        self.cursorNumerosAposta = self.db_config.cursor()
+        self.cursorNumerosAposta = self.__conexao.db_config.cursor()
         
-        
-    
     #Criação das Tabela  
     def criarTabelas(self):
         
@@ -48,7 +57,7 @@ class ApostaBD:
         
     
     def criar_tabela_apostas(self):
-        self.cursorAposta.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "aposta"))
+        self.cursorAposta.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.conexao.db_config.database, "aposta"))
         
         #Result é verdadeiro se existir tabela de aposta
         result = self.cursorAposta.fetchone()
@@ -69,7 +78,7 @@ class ApostaBD:
         
             
     def criar_tabela_numeros_apostados(self):
-        self.cursorNumerosAposta.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "numeros_aposta")) 
+        self.cursorNumerosAposta.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.conexao.db_config.database, "numeros_aposta")) 
         
         #Result é verdadeiro se existir tabela de numeros_aposta     
         result = self.cursorNumerosAposta.fetchone()   
@@ -98,7 +107,7 @@ class ApostaBD:
                                             WHERE table_schema = %s
                                             AND table_name = %s
                                             AND index_name = %s;
-                                         """, (self.db_config.database, "numeros_aposta","idx_id_aposta")) 
+                                         """, (self.conexao.db_config.database, "numeros_aposta","idx_id_aposta")) 
         
         #Result é verdadeiro se existir tabela de numeros_aposta     
         result = self.cursorNumerosAposta.fetchone()   
@@ -116,7 +125,7 @@ class ApostaBD:
                                             WHERE table_schema = %s
                                             AND table_name = %s
                                             AND index_name = %s;
-                                         """, (self.db_config.database, "aposta","idx_cpf")) 
+                                         """, (self.conexao.db_config.database, "aposta","idx_cpf")) 
         
         #Result é verdadeiro se existir tabela de numeros_aposta     
         result = self.cursorAposta.fetchone()   
@@ -135,7 +144,7 @@ class ApostaBD:
                                             WHERE table_schema = %s
                                             AND table_name = %s
                                             AND index_name = %s;
-                                         """, (self.db_config.database, "aposta","idx_id_sorteio")) 
+                                         """, (self.conexao.db_config.database, "aposta","idx_id_sorteio")) 
         
         #Result é verdadeiro se existir tabela de numeros_aposta     
         result = self.cursorAposta.fetchone()   
@@ -153,9 +162,14 @@ class ApostaBD:
     def adicionarNumero(self, aposta, num):
         
         #Verifica se num esta no intervalo 1 a 50, juntamente se num não esta na aposta e se a aposta ainda não tem 5 números
-        if num in range(1,51) and num not in aposta.numeros and len(aposta.numeros) < 5:
+        if self.__validacao_numero(num, aposta.numeros):
             aposta.numeros.append(num)
 
+    
+    def __validacao_numero(self, num, numeros):
+        if num in range(1,51) and num not in numeros and len(numeros) < 5:
+            return True
+        return False
     
     #Sistema Surpresinha            
     def surpresinha(self, aposta):
@@ -192,7 +206,7 @@ class ApostaBD:
                                             VALUES (%s, %s, %s, %s, %s, %s);
                                             """,(aposta.numeros[0], aposta.numeros[1], aposta.numeros[2], aposta.numeros[3], aposta.numeros[4], aposta.id))
     #Retorna todas as aposta do cpf específico
-    def mostrar_apostas(self, cpf, id_sorteio):
+    def lista_apostas_cpf(self, cpf, id_sorteio):
         
         #seleciona todas as aposta do cpf específico
         self.cursorNumerosAposta.execute(f"""
@@ -222,7 +236,7 @@ class ApostaBD:
                     
     #Deleta todos as tabela                
     def deleteBDs(self):
-        self.cursorNumerosAposta.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "numeros_aposta")) 
+        self.cursorNumerosAposta.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.conexaof.db_config.database, "numeros_aposta")) 
         
         #Result é verdadeiro se existir tabela de numeros_aposta     
         result = self.cursorNumerosAposta.fetchone()   
@@ -232,7 +246,7 @@ class ApostaBD:
                                         DROP TABLE numeros_aposta
                                         """) 
             
-        self.cursorAposta.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.db_config.database, "aposta"))
+        self.cursorAposta.execute("SELECT * FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", (self.conexao.db_config.database, "aposta"))
         
         #Result é verdadeiro se existir tabela de aposta
         result = self.cursorAposta.fetchone()
@@ -242,10 +256,5 @@ class ApostaBD:
                                         DROP TABLE aposta
                                           """)   
          
-    #Atualiza o Banco    
-    def commitBD(self):
-        self.db_config.commit()
-    
-    #Encerra comunicação com o banco
-    def fechaBD(self):
-        self.db_config.close()      
+    def __commitApostas(self):
+       self.conexao.commitBD()
