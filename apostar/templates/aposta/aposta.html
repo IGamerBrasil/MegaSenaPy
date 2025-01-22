@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="my-5">Sua Aposta</h1>
+
+
+<h3>Números entre 1 a 50</h3>
+
+<br><br>
+<h4>{{nota}}</h4>
+<br><br>
+
+<form action="{% url 'mais' %}" method="get">
+    <label for="{{multiplas_apostasform.numero_de_apostas.id_numero_de_apostas}}">Número de apostas:</label>
+    {{multiplas_apostasform.numero_de_apostas}}
+    <input type="submit" value="Ok">
+</form>
+
+<form class="my-5" action="{% url 'aposta.selecao'%}" method="post">
+    {% csrf_token %}
+    {{apostaform.as_p}}
+    <input type="submit" value="Confirmar Aposta" action="{% url 'menu.principal'%}">
+</form>
+
+
+{% if apostaform.errors %}
+<div class="alert alert-danger my-5" >
+    <ul>
+        {% for field, errors in apostaform.errors.items %}
+            {% for item in apostaform %}
+                {% if field == item.name %}
+                <li style="list-style-type: none; padding-left: 0;"><strong>{{ item.label }}</strong>: {{ errors|join:", " }}</li>
+                {%endif%}
+            {% endfor%}
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% endblock %}

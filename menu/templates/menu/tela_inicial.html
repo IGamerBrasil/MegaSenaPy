@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1 class="my-5">ZehBet</h1>
+
+    <h3 class="my-5">Bem-Vindo ao melhor site de apostas de todos!</h3>
+    {% if user.is_authenticated %}
+    <a href="{% url 'aposta.selecao' %}" class="btn btn-primary my-5">Apostar</a>
+    {% else %}
+    <h3 class="my-5">Para apostar deve se logar</h3>
+    {% endif %}
+    <h3 class="my-9">Onde o adulto chora e a mae nao ve</h3>
+
+
+    <a href="{% url 'sobre.lista' %}" class="btn">Sobre</a>
+    <a href="{% url 'suporte.lista' %}" class="btn">Suporte</a>
+    {% if user.is_staff %}
+    <a href="{% url 'restricted.area' %}" class="btn">Apenas para Conta Funcionario</a>
+    {% endif %}
+
+{% endblock %}
